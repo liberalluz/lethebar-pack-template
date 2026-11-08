@@ -35,7 +35,7 @@ Three numbers, three jobs:
 - `specVersion`, the pack format, `2.0.0` today
 - `engine`, the range of engines the pack claims to run on
 
-The repository is tested against engine **v0.6.0**. An engine newer than that is
+The repository is tested against engine **v0.6.1**. An engine newer than that is
 allowed by the range in the manifest; an older one usually is not.
 
 ## What the gate checks
