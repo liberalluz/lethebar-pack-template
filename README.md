@@ -49,3 +49,32 @@ here means the install will not be refused for shape.
 ## License
 
 Apache-2.0, the same as the engine.
+
+## Adding a second pack
+
+A world is one repository with several packs, side by side:
+
+```
+packs/example/          the pack this template ships
+packs/my-story/         yours: manifest.json and data/
+packs/my-rules/         a layer over the first one
+```
+
+Each pack keeps its own id, its own version and its own tag. To publish the
+second one, tag it and nothing else is touched:
+
+```bash
+git tag pack/my-story/v0.1.0 && git push origin pack/my-story/v0.1.0
+```
+
+The gate reads the id out of the tag, builds `packs/my-story`, and refuses the
+push if that folder has no `manifest.json`. Two packs must never share an id:
+the id is the save key, so a duplicate would read another story save.
+
+A layer declares what it sits on:
+
+```json
+{ "kind": "layer", "layer": "mod", "target": "example", "requires": ["example"] }
+```
+
+See the engine's "one repository, several packs" page for the full rules.

@@ -1,8 +1,12 @@
 name: gate
 
-# This file ships with the template. It builds the pack, checks the archive an
+# This file ships with the template. It builds one pack, checks the archive an
 # author uploads, and publishes only when a pack tag is pushed. The three steps
 # are the same three the engine's guide names.
+#
+# Which pack? The one the tag names: a tag pack/<id>/v<version> publishes
+# packs/<id>. A push to main builds the example pack, so the gate has something
+# to check before the first tag exists.
 on:
   push:
     branches: [main]
@@ -15,20 +19,36 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: pick the pack
+        id: pack
+        run: |
+          if [[ "${GITHUB_REF_NAME}" == pack/*/v* ]]; then
+            id="${GITHUB_REF_NAME#pack/}"
+            id="${id%/v*}"
+          else
+            id="example"
+          fi
+          if [[ ! -f "packs/${id}/manifest.json" ]]; then
+            echo "the tag names packs/${id}, which has no manifest" >&2
+            exit 1
+          fi
+          echo "id=${id}" >> "$GITHUB_OUTPUT"
+          echo "building packs/${id}"
+
       - name: build
-        run: python infra/tool/release/pack.py build packs/example --out dist
+        run: python infra/tool/release/pack.py build "packs/${{ steps.pack.outputs.id }}" --out dist
 
       - name: check the archive
-        run: python infra/checks/check_pack.py dist/example.zip
+        run: python infra/checks/check_pack.py "dist/${{ steps.pack.outputs.id }}.zip"
 
       # Publishing is guarded on purpose: a push to main must never create a
       # release. Only a tag shaped pack/<id>/v<version> publishes, and only the
-      # pack named in that tag.
+      # pack that tag names.
       - name: publish
         if: startsWith(github.ref, 'refs/tags/pack/')
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          python infra/tool/release/pack.py hash dist/example.zip
-          python infra/tool/release/pack.py publish dist/example.zip \
+          python infra/tool/release/pack.py hash "dist/${{ steps.pack.outputs.id }}.zip"
+          python infra/tool/release/pack.py publish "dist/${{ steps.pack.outputs.id }}.zip" \
             --repo "${{ github.repository }}" --tag "${{ github.ref_name }}" --apply
