@@ -1,0 +1,28 @@
+{
+  "nodes": [
+    {
+      "id": "open",
+      "text": "The road splits at the ford. The river is loud and the ridge is quiet.",
+      "choices": [
+        {
+          "label": "Follow the water",
+          "next": "river"
+        },
+        {
+          "label": "Climb the ridge",
+          "next": "ridge"
+        }
+      ]
+    },
+    {
+      "id": "river",
+      "text": "The water carries you a mile downstream, and the ford is behind you.",
+      "choices": []
+    },
+    {
+      "id": "ridge",
+      "text": "From the top you can see both banks, and the road you did not take.",
+      "choices": []
+    }
+  ]
+}
