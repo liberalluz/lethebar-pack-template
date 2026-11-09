@@ -4,6 +4,10 @@ name: gate
 # author uploads, and publishes only when a pack tag is pushed. The three steps
 # are the same three the engine's guide names.
 #
+# The tools are not copied into this repository. They are read from the engine
+# at the tag named by ENGINE_REF, checked out below into engine/, so a pack is
+# always judged by the engine release this file names.
+#
 # Which pack? The one the tag names: a tag pack/<id>/v<version> publishes
 # packs/<id>. A push to main builds the example pack, so the gate has something
 # to check before the first tag exists.
@@ -13,11 +17,21 @@ on:
     tags: ["pack/**"]
   pull_request:
 
+env:
+  ENGINE_REF: v0.7.2
+
 jobs:
   gate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: check out the engine at the declared tag
+        uses: actions/checkout@v4
+        with:
+          repository: liberalluz/lethebar
+          ref: ${{ env.ENGINE_REF }}
+          path: engine
 
       - name: pick the pack
         id: pack
@@ -36,10 +50,10 @@ jobs:
           echo "building packs/${id}"
 
       - name: build
-        run: python infra/tool/release/pack.py build "packs/${{ steps.pack.outputs.id }}" --out dist
+        run: python engine/infra/tool/release/pack.py build "packs/${{ steps.pack.outputs.id }}" --out dist
 
       - name: check the archive
-        run: python infra/checks/check_pack.py "dist/${{ steps.pack.outputs.id }}.zip"
+        run: python engine/infra/checks/check_pack.py "dist/${{ steps.pack.outputs.id }}.zip"
 
       # Publishing is guarded on purpose: a push to main must never create a
       # release. Only a tag shaped pack/<id>/v<version> publishes, and only the
@@ -49,6 +63,6 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          python infra/tool/release/pack.py hash "dist/${{ steps.pack.outputs.id }}.zip"
-          python infra/tool/release/pack.py publish "dist/${{ steps.pack.outputs.id }}.zip" \
+          python engine/infra/tool/release/pack.py hash "dist/${{ steps.pack.outputs.id }}.zip"
+          python engine/infra/tool/release/pack.py publish "dist/${{ steps.pack.outputs.id }}.zip" \
             --repo "${{ github.repository }}" --tag "${{ github.ref_name }}" --apply
