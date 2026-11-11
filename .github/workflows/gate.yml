@@ -23,7 +23,7 @@ permissions:
   contents: write
 
 env:
-  ENGINE_REF: v0.7.6
+  ENGINE_REF: v0.8.0
 
 jobs:
   gate:
@@ -71,3 +71,4 @@ jobs:
           python engine/infra/tool/release/pack.py hash "dist/${{ steps.pack.outputs.id }}.zip"
           python engine/infra/tool/release/pack.py publish "dist/${{ steps.pack.outputs.id }}.zip" \
             --repo "${{ github.repository }}" --tag "${{ github.ref_name }}" --apply
+
