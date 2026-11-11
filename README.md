@@ -4,7 +4,7 @@ A starting point for a story the Lethebar engine can install and play. Click
 **Use this template** on GitHub, rename the repository, and replace the example
 pack with yours; nothing else has to be assembled by hand.
 
-If you want the whole picture first, read [What is this?](https://github.com/liberalluz/lethebar/blob/v0.7.6/docs/guide/what-is-this.md): it explains what a pack is, what a run does and what one pack cannot do, without engine jargon.
+If you want the whole picture first, read [What is this?](https://github.com/liberalluz/lethebar/blob/v0.8.0/docs/guide/what-is-this.md): it explains what a pack is, what a run does and what one pack cannot do, without engine jargon.
 
 <!-- pack-badges:begin -->
 ![packs](https://img.shields.io/badge/packs-1-6f42c1)
@@ -56,7 +56,7 @@ Three numbers, three jobs:
   `>=4.7.0 <5.0.0`
 
 `ENGINE_REF` in `gate.yml` is a fourth number, and a different one: it names the
-Lethebar release whose tools check this repository, **v0.7.6** today. Bump that
+Lethebar release whose tools check this repository, **v0.8.0** today. Bump that
 line when you want a newer checker. It is not the `engine` field: the field is
 about the runtime, `ENGINE_REF` is about the checker.
 
@@ -114,3 +114,4 @@ A layer declares what it sits on:
 ```
 
 See the engine's "one repository, several packs" page for the full rules.
+
