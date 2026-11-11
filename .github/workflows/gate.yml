@@ -17,8 +17,13 @@ on:
     tags: ["pack/**"]
   pull_request:
 
+# Publishing creates the release and uploads its assets with the workflow token,
+# which is read-only unless the workflow asks for more.
+permissions:
+  contents: write
+
 env:
-  ENGINE_REF: v0.7.5
+  ENGINE_REF: v0.7.6
 
 jobs:
   gate:
